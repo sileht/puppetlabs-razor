@@ -136,4 +136,14 @@ class razor (
     notify  => Service['razor'],
   }
 
+  exec { "gen_ipxe":
+    command => "${directory}/bin/razor config ipxe > /tmp/razor.ipxe",
+    subscribe => File["$directory/conf/razor_server.conf"],
+  }
+
+  tftp::file { 'razor.ipxe':
+    source => '/tmp/razor.ipxe',
+    subscribe => Exec['gen_ipxe'],
+  }
+
 }
