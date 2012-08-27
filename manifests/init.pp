@@ -159,7 +159,7 @@ class razor (
   $server_opts_filter = join(sort(keys($server_opts_hash)), ":' -e '^")
   exec { "get_default_config":
     command => "${directory}/bin/razor config default | sed -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*\$//g' -e 's/:\$/: \"\"/g' -e 's/persist_mode: /&:/' | grep -v -e '^ProjectRazor Config' -e '^${server_opts_filter}:' | sort > ${directory}/conf/razor_server.conf.default",
-    require => Vcsrepo[$directory],
+    require => [ Vcsrepo[$directory], Exec["get_default_config_preworkaround"] ],
   }
 
   concat::fragment{"razor_server.conf.header":
@@ -173,7 +173,7 @@ class razor (
     target  => $server_conffile,
     source  => "${directory}/conf/razor_server.conf.default",
     order   => 1,
-    require => Exec["get_default_config"],
+    require => [ Exec["get_default_config"], Exec["get_default_config_postworkaround"] ],
   }
 
   concat::fragment { "razor_server.conf.custom":
