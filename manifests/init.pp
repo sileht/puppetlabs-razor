@@ -40,10 +40,12 @@ class razor (
   $mk_name             = 'rz_mk_prod-image.0.9.0.4.iso',
   $mk_source           = 'https://github.com/downloads/puppetlabs/Razor-Microkernel/rz_mk_prod-image.0.9.0.4.iso',
   $git_source          = 'http://github.com/puppetlabs/Razor.git',
-  $git_revision        = 'master'
+  $git_revision        = 'master',
+  $server_opts_hash    = {},
 ) {
 
   include sudo
+  include 'concat::setup'
   include 'razor::ruby'
   include 'razor::tftp'
 
@@ -129,15 +131,60 @@ class razor (
     require => [ File['/usr/local/bin/razor'], Package['curl'], Service['razor'] ],
   }
 
-  file { "$directory/conf/razor_server.conf":
-    ensure  => file,
-    content => template('razor/razor_server.erb'),
+  # Add minimal field
+  $server_opts_hash["mk_checkin_interval"] = $mk_checkin_interval
+  $server_opts_hash["image_svc_host"] = $address
+  $server_opts_hash["image_svc_path"] = "${directory}/image"
+  $server_opts_hash["persist_host"] = $persist_host
+  $server_opts_hash["mk_uri"] = "http://${address}:8026"
+
+  $server_conffile = "$directory/conf/razor_server.conf"
+
+  concat{$server_conffile:
     require => Vcsrepo[$directory],
     notify  => Service['razor'],
+  }
+  
+  # Actually razor config default don't return the default values... so a quick (temporary) workaround to have the default values
+  exec { "get_default_config_preworkaround":
+    command => "${directory}/bin/razor config > /dev/null; mv -f ${directory}/conf/razor_server.conf ${directory}/conf/razor_server.conf.default_workaround",
+    require => Vcsrepo[$directory],
+  } 
+  exec { "get_default_config_postworkaround":
+    command => "mv -f ${directory}/conf/razor_server.conf.default_workaround ${directory}/conf/razor_server.conf",
+    require => Exec["get_default_config"],
+  }
+  ## end workaround ##
+
+  $server_opts_filter = join(sort(keys($server_opts_hash)), ":' -e '^")
+  exec { "get_default_config":
+    command => "${directory}/bin/razor config default | sed -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*\$//g' -e 's/:\$/: \"\"/g' -e 's/persist_mode: /&:/' | grep -v -e '^ProjectRazor Config' -e '^${server_opts_filter}:' | sort > ${directory}/conf/razor_server.conf.default",
+    require => Vcsrepo[$directory],
+  }
+
+  concat::fragment{"razor_server.conf.header":
+    target  => $server_conffile,
+    content => "--- !ruby/object:ProjectRazor::Config::Server
+",
+    order   => 0,
+  }
+
+  concat::fragment{"razor_server.conf.default":
+    target  => $server_conffile,
+    source  => "${directory}/conf/razor_server.conf.default",
+    order   => 1,
+    require => Exec["get_default_config"],
+  }
+
+  concat::fragment { "razor_server.conf.custom":
+    target  => $server_conffile,
+    order   => 2,
+    content => template('razor/razor_server.erb'),
   }
 
   exec { "gen_ipxe":
     command => "${directory}/bin/razor config ipxe > /tmp/razor.ipxe",
+    refreshonly => true,
     subscribe => File["$directory/conf/razor_server.conf"],
   }
 
