@@ -72,7 +72,7 @@ describe 'razor', :type => :class do
           :require   => ['Class[Mongodb]', 'File[/var/lib/razor]', 'Sudo::Conf[razor]'],
           :subscribe => ['Class[Razor::Nodejs]', "Vcsrepo[#{params[:directory]}]"]
         )
-        should contain_exec('get_default_config').with_command("#{params[:directory]}/bin/razor config default | sed -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*\$//g' -e 's/:\$/: \"\"/g' -e 's/persist_mode: /&:/' | grep -v -e '^ProjectRazor Config' -e '^image_svc_host:' -e '^image_svc_path:' -e '^mk_checkin_interval:' -e '^mk_log_level:' -e '^mk_uri:' -e '^persist_host:' | sort > #{params[:directory]}/conf/razor_server.conf.default")
+        should contain_exec('get_default_config').with_command("#{params[:directory]}/bin/razor config factory | sed -e 's/^[[:space:]]*//g' -e 's/[[:space:]]*\$//g' -e 's/:\$/: \"\"/g' -e 's/persist_mode: /&:/' | grep -v -e '^ProjectRazor Config' -e '^image_svc_host:' -e '^image_svc_path:' -e '^mk_checkin_interval:' -e '^mk_log_level:' -e '^mk_uri:' -e '^persist_host:' | sort > #{params[:directory]}/conf/razor_server.conf.default")
         should include_class('concat::setup')
         should contain_concat__fragment("razor_server.conf.default").with(
           #:require => 'Exec[get_default_config]', # disable due to "razor config default" workaround
