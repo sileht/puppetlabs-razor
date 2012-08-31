@@ -137,7 +137,7 @@ class razor (
   $server_opts_hash["persist_host"] = $persist_host
   $server_opts_hash["mk_uri"] = "http://${address}:8026"
 
-  file{"$directory/conf/razor_server.conf":
+  file { "$directory/conf/razor_server.conf":
     require => Vcsrepo[$directory],
     notify  => Service['razor'],
     content => template('razor/razor_server.erb'),
