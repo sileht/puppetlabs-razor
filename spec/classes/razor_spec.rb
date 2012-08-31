@@ -81,12 +81,12 @@ describe 'razor', :type => :class do
           :content => /mk_log_level: #{params[:server_opts_hash]['mk_log_level']}/,
           :notify  => 'Service[razor]'
         )
-        should contain_exec('gen_ipxe').with_command("#{params[:directory]}/bin/razor config ipxe > #{platform[:path]}/razor.ipxe.source")
+        should contain_exec('gen_ipxe').with_command("#{params[:directory]}/bin/razor config ipxe > #{params[:directory]}/conf/razor.ipxe.source")
         should contain_exec('gen_ipxe').with(
           :subscribe => "File[#{params[:directory]}/conf/razor_server.conf]"
         )
         should contain_file("#{platform[:path]}/razor.ipxe").with(
-          :source => "#{platform[:path]}/razor.ipxe.source",
+          :source => "#{params[:directory]}/conf/razor.ipxe.source",
           :subscribe => 'Exec[gen_ipxe]'
         )
       }

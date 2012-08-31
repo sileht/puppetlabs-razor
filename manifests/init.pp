@@ -146,13 +146,13 @@ class razor (
   # regenerate the file only when razor_server.conf change, 
   # use a temporary file to let tftp::file handle the permissions
   exec { "gen_ipxe":
-    command => "${directory}/bin/razor config ipxe > ${tftp::directory}/razor.ipxe.source",
+    command => "${directory}/bin/razor config ipxe > ${directory}/conf/razor.ipxe.source",
     refreshonly => true,
     subscribe => File["$directory/conf/razor_server.conf"],
   }
 
   tftp::file { 'razor.ipxe':
-    source => "${tftp::directory}/razor.ipxe.source",
+    source => "${directory}/conf/razor.ipxe.source",
     subscribe => Exec['gen_ipxe'],
   }
 
