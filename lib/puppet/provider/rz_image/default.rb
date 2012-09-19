@@ -45,6 +45,7 @@ Puppet::Type.type(:rz_image).provide(:default) do
   end
 
   def download(source, target)
+    Puppet.notice("Downloading rz_image from #{source} ...")
     curl '-L', source, '-a', '-o', target
   end
 
