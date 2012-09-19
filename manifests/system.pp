@@ -32,7 +32,7 @@ define razor::system (
     enabled => 'true',
     tags    => [$name],
     template => 'linux_deploy',
-    maximum => 1,
+    maximum => $instances,
   }
 }
 
