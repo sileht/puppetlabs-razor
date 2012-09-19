@@ -15,7 +15,7 @@ rz_image { 'Precise':
 
 razor::system { 'demo':
   domain       => 'dmz25.lab',
-  rootpassword => 'test1234',
+  password     => 'test1234',
   instances    => 1,
   image        => 'Precise',
   tag_matcher  => [
