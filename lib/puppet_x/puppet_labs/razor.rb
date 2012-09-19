@@ -63,7 +63,7 @@ module PuppetX::PuppetLabs
     end
 
     def get_tags
-      output = razor '-w', 'tag', 'get', 'default'
+      output = razor '-w', 'tag', 'get'
       uuids = parse(output).collect{ |x| x['@uuid'] if x.include? '@uuid'}.compact
       tags = uuids.collect do |id|
         output = razor '-w', 'tag', 'get', id
