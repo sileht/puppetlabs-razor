@@ -94,7 +94,7 @@ Puppet::Type.type(:rz_tag).provide(:default) do
   def destroy
     @property_hash[:ensure] = :absent
     @property_hash[:tag_matcher].each do |m|
-      razor '-w', 'tag', 'matcher', 'remove', m[:uuid]
+      razor '-w', 'tag', @property_hash[:uuid], 'matcher', 'remove', m[:uuid]
     end
     razor '-w', 'tag', 'remove', @property_hash[:uuid]
   end
