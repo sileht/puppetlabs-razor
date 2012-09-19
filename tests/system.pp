@@ -20,7 +20,7 @@ define system (
 
   rz_tag { $name:
     tag_label   => $name,
-    tag_matcher => [ { 'key'     => 'macaddress',
+    tag_matcher => [ { 'key'     => 'macaddress_eth0',
                        'compare' => 'equal',
                        'value'   => $macaddress,
                        'inverse' => false,
@@ -38,20 +38,21 @@ define system (
   }
 }
 
+rz_image { 'rz_mk_prod-image.0.9.0.4.iso':
+  ensure  => present,
+  type    => 'mk',
+  source  => 'https://github.com/downloads/puppetlabs/Razor-Microkernel/rz_mk_prod-image.0.9.0.4.iso',
+}
+
 rz_image { 'UbuntuPrecise':
   ensure => present,
   type    => 'os',
   version => '12.04',
-  source  => '/mnt/nfs/ubuntu-12.04-server-amd64.iso',
+  source  => '/opt/razor/ubuntu-12.04.1-server-amd64.iso',
 }
 
-system { 'database':
-  macaddress   => '00:0c:29:6e:e7:83',
-  rootpassword => 'dba_only_passwd',
+system { 'demo':
+  macaddress   => '00:25:B5:00:05:BF',
+  rootpassword => 'test1234',
   image        => 'UbuntuPrecise',
-}
-
-system { 'webserver':
-  macaddress => '86:36:30:54:AD:A6',
-  image      => 'UbuntuPrecise',
 }
