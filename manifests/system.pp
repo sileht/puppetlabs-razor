@@ -16,7 +16,7 @@ define razor::system (
     image     => $image,
     metadata  => { 'domainname'      => $domain,
                    'hostname_prefix' => $hostprefix,
-                   'rootpassword'    => $password, },
+                   'root_password'    => $password, },
     template  => $model_template,
   }
 

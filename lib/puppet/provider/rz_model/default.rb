@@ -64,7 +64,7 @@ Puppet::Type.type(:rz_model).provide(:default) do
       'template'          => @resource[:template],
       'label'             => @resource[:name],
       'image_uuid'        => uuid,
-      'req_metadata_hash' => prefix_at(@resource[:metadata]),
+      'req_metadata_hash' => @resource[:metadata],
     }
 
     Puppet.debug "razor -w model add '#{model.to_pson}'"

@@ -12,7 +12,7 @@ rz_image { 'Precise':
   source  => '/opt/razor/ubuntu-12.04.1-server-amd64.iso',
 }
 
-razor::system { 'control':
+razor::system { 'danscontroller':
   domain       => 'dmz25.lab',
   password     => 'test1234',
   instances    => 1,
@@ -20,7 +20,19 @@ razor::system { 'control':
   tag_matcher  => [
     { 'key'     => 'macaddress_eth0',
       'compare' => 'equal',
-      'value'   => '00:25:B5:00:05:BF',
+      'value'   => '00:25:B5:00:05:CF',
+      'inverse' => false,
+    } ],
+} -> 
+razor::system { 'danscompute':
+  domain       => 'dmz25.lab',
+  password     => 'test1234',
+  instances    => 1,
+  image        => 'Precise',
+  tag_matcher  => [
+    { 'key'     => 'macaddress_eth0',
+      'compare' => 'equal',
+      'value'   => '00:25:B5:00:05:2F',
       'inverse' => false,
     } ],
 } -> 
@@ -28,7 +40,7 @@ razor::system { 'control':
 razor::system { 'compute':
   domain       => 'dmz25.lab',
   password     => 'test1234',
-  instances    => 4,
+  instances    => 6,
   image        => 'Precise',
   tag_matcher  => [
     { 'key'     => 'productname',
@@ -38,10 +50,10 @@ razor::system { 'compute':
     } ],
 } ->
 
-razor::system { 'static':
+razor::system { 'control':
   domain       => 'dmz25.lab',
   password     => 'test1234',
-  instances    => 4,
+  instances    => 6,
   image        => 'Precise',
   tag_matcher  => [
     { 'key'     => 'productname',
