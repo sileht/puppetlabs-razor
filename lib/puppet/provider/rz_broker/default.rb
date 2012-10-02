@@ -47,7 +47,7 @@ Puppet::Type.type(:rz_broker).provide(:default) do
 
     broker = {
       'name'        => @resource[:name],
-      'description' => @resource[:description],
+      'description' => "plop",
       'servers'     => @resource[:servers],
       'plugin'      => @resource[:plugin],
     }
