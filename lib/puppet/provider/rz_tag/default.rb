@@ -52,7 +52,7 @@ Puppet::Type.type(:rz_tag).provide(:default) do
         :key           => m['key'],
         :value         => m['value'],
         :compare       => m['compare'],
-        :inverse       => m['inverse'],
+        :invert       => m['inverse'],
       }
       command = ['razor', '-w', 'tag', @property_hash[:uuid], 'matcher', 'add', "'#{matcher.to_pson}'"].join(" ")
       results = execute(command, :combine => true)
@@ -83,7 +83,7 @@ Puppet::Type.type(:rz_tag).provide(:default) do
         :key           => m['key'],
         :value         => m['value'],
         :compare       => m['compare'],
-        :inverse       => m['inverse'],
+        :invert       => m['inverse'],
       }
       command = ['razor', '-w', 'tag', tag_uuid, 'matcher', 'add', "'#{matcher.to_pson}'"].join(" ")
       results = execute(command, :combine => true)
